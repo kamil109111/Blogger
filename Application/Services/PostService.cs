@@ -33,6 +33,12 @@ namespace Application.Services
             return _mapper.Map<PostDto>(post);
         }
 
+        public void DeletePost(int id)
+        {
+            var post = _postRepository.GetById(id);
+            _postRepository.Delete(post);
+        }
+
         public IEnumerable<PostDto> GetAllPosts()
         {
             var posts = _postRepository.GetAll();
