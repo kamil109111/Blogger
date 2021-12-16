@@ -12,9 +12,9 @@ namespace Infrastructure.Repository
     {
         private static readonly ISet<Post> _posts = new HashSet<Post>()
         {
-            new Post(1, "Tytuł 1", "Treść 1"),
-            new Post(2, "Tytuł 2", "Treść 2"),
-            new Post(3, "Tytuł 3", "Treść 3")
+            new Post(1, "Jak zostać programistą?", "Treść 1"),
+            new Post(2, "Ile zarabia programista?", "Treść 2"),
+            new Post(3, "Dlaczego warto zostać programistą?", "Treść 3")
         };
         public Post Add(Post post)
         {
@@ -37,6 +37,21 @@ namespace Infrastructure.Repository
         public Post GetById(int id)
         {
             return _posts.SingleOrDefault(p => p.Id == id);    
+        }
+
+        public IEnumerable<Post> SearchByTitle(string title)
+        {
+            ISet<Post> posts = new HashSet<Post>();
+
+            foreach (var post in _posts)
+            {
+                bool contain = post.Title.ToLower().Contains(title.ToLower());
+                if (contain == true)
+                {
+                    posts.Add(post);
+                }
+            }
+            return posts;
         }
 
         public void Update(Post post)

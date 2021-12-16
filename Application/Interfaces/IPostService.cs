@@ -15,5 +15,6 @@ namespace Application.Interfaces
         PostDto AddNewPost(CreatePostDto newPost);
         void UpdatePost(UpdatePostDto updatePostDto);
         void DeletePost(int id);
+        IEnumerable<PostDto> SearchPostByTitle(string title);
     }
 }

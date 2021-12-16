@@ -51,6 +51,12 @@ namespace Application.Services
             return _mapper.Map<PostDto>(post);
         }
 
+        public IEnumerable<PostDto> SearchPostByTitle(string title)
+        {
+            var posts = _postRepository.SearchByTitle(title);
+            return _mapper.Map<IEnumerable<PostDto>>(posts);
+        }
+
         public void UpdatePost(UpdatePostDto updatePost)
         {
             var existingPost = _postRepository.GetById(updatePost.Id);

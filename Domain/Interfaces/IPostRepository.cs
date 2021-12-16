@@ -14,5 +14,6 @@ namespace Domain.Interfaces
         Post Add(Post post);
         void Update(Post post);
         void Delete(Post post);
+        IEnumerable<Post> SearchByTitle(string title);
     }
 }
