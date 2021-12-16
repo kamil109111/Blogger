@@ -3,9 +3,13 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Linq;
 
-namespace WebAPI.Controllers
+namespace WebAPI.Controllers.V2
+
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiVersion("2.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase
@@ -16,13 +20,20 @@ namespace WebAPI.Controllers
             _postService = postService;
         }
 
+        [SwaggerOperation(Summary = "Retrives all posts")]
         [HttpGet]
         public IActionResult Get()
         {
             var posts = _postService.GetAllPosts();
-            return Ok(posts);
+            return Ok(
+                new
+                {
+                    posts = posts,
+                    Count = posts.Count()
+                });
         }
 
+        [SwaggerOperation(Summary = "Retrives a sprcific post by unique id")]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
