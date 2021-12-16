@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Interfaces;
@@ -14,8 +15,8 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<IPostService, PostService>();
-            services.AddSingleton(AutoMapperConfig.Initialize());
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddScoped<IPostService, PostService>();            
 
             return services;
         }
