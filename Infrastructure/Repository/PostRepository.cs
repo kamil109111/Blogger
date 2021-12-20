@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,40 +11,41 @@ namespace Infrastructure.Repository
 {
     public class PostRepository : IPostRepository
     {
-        private static readonly ISet<Post> _posts = new HashSet<Post>()
+        private readonly BloggerContext _context;
+
+        public PostRepository(BloggerContext context)
         {
-            new Post(1, "Jak zostać programistą?", "Treść 1"),
-            new Post(2, "Ile zarabia programista?", "Treść 2"),
-            new Post(3, "Dlaczego warto zostać programistą?", "Treść 3")
-        };
+            _context = context;
+        }
+
         public Post Add(Post post)
-        {
-            post.Id = _posts.Count() + 1;
-            post.Created = DateTime.UtcNow;
-            _posts.Add(post);
+        {         
+            _context.Posts.Add(post);
+            _context.SaveChanges();
             return post;
         }
 
         public void Delete(Post post)
         {
-            _posts.Remove(post);
+            _context.Posts.Remove(post);
+            _context.SaveChanges();
         }
 
         public IEnumerable<Post> GetAll()
         {
-           return _posts;
+           return _context.Posts;
         }
 
         public Post GetById(int id)
         {
-            return _posts.SingleOrDefault(p => p.Id == id);    
+            return _context.Posts.SingleOrDefault(p => p.Id == id);    
         }
 
         public IEnumerable<Post> SearchByTitle(string title)
         {
             ISet<Post> posts = new HashSet<Post>();
 
-            foreach (var post in _posts)
+            foreach (var post in _context.Posts)
             {
                 bool contain = post.Title.ToLower().Contains(title.ToLower());
                 if (contain == true)
@@ -55,8 +57,9 @@ namespace Infrastructure.Repository
         }
 
         public void Update(Post post)
-        {
-            post.LastModified = DateTime.UtcNow;
+        {            
+            _context.Posts.Update(post);
+            _context.SaveChanges();
         }
     }
 }
