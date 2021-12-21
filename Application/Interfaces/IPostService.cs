@@ -10,11 +10,11 @@ namespace Application.Interfaces
 {
     public interface IPostService
     {
-        IEnumerable<PostDto> GetAllPosts();
-        PostDto GetPostById(int id);
-        PostDto AddNewPost(CreatePostDto newPost);
-        void UpdatePost(UpdatePostDto updatePostDto);
-        void DeletePost(int id);
-        IEnumerable<PostDto> SearchPostByTitle(string title);
+        Task<IEnumerable<PostDto>> GetAllPostsAsync();
+        Task<PostDto> GetPostByIdAsync(int id);
+        Task<PostDto> AddNewPostAsync(CreatePostDto newPost);
+        Task UpdatePostAsync(UpdatePostDto updatePostDto);
+        Task DeletePostAsync(int id);
+        Task<IEnumerable<PostDto>> SearchPostByTitleAsync(string title);
     }
 }

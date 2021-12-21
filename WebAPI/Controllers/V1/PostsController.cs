@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers.V1
 
@@ -20,17 +21,17 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Retrives all posts")]
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAsync()
         {
-            var posts = _postService.GetAllPosts();
+            var posts = await _postService.GetAllPostsAsync();
             return Ok(posts);
         }
 
         [SwaggerOperation(Summary = "Retrives a sprcific post by unique id")]
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> GetAsync(int id)
         {
-            var post = _postService.GetPostById(id);
+            var post = await _postService.GetPostByIdAsync(id);
             if (post == null)
             {
                 return NotFound();
@@ -41,33 +42,33 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Create a new post")]
         [HttpPost]
-        public IActionResult Create(CreatePostDto newPost)
+        public async Task<IActionResult> CreateAsync(CreatePostDto newPost)
         {
-            var post = _postService.AddNewPost(newPost);
+            var post = await _postService.AddNewPostAsync(newPost);
             return Created($"api/posts/{post.Id}", post);
         }
 
         [SwaggerOperation(Summary = "Update a existing post")]
         [HttpPut]
-        public IActionResult Update (UpdatePostDto updatePost)
+        public async Task<IActionResult> UpdateAsync(UpdatePostDto updatePost)
         {
-            _postService.UpdatePost(updatePost);
+            await _postService.UpdatePostAsync(updatePost);
             return NoContent();
         }
 
         [SwaggerOperation(Summary = "Delete a specific post")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            _postService.DeletePost(id);
+            await _postService.DeletePostAsync(id);
             return NoContent();
         }
 
         [SwaggerOperation(Summary ="Search post by title")]
         [HttpGet("Search/{title}")]
-        public IActionResult Get(string title)
+        public async Task<IActionResult> GetAsync(string title)
         {
-            var posts = _postService.SearchPostByTitle(title);
+            var posts = await _postService.SearchPostByTitleAsync(title);
             return Ok(posts);
         }
     }
