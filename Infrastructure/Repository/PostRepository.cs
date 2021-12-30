@@ -45,16 +45,11 @@ namespace Infrastructure.Repository
 
         public async Task<IEnumerable<Post>> SearchByTitleAsync(string title)
         {
-           ISet<Post> posts = new HashSet<Post>();
 
-            foreach (var post in _context.Posts)
-            {
-                bool contain = post.Title.ToLower().Contains(title.ToLower());
-                if (contain == true)
-                {
-                   posts.Add(post);
-                }
-            }
+            var posts = await _context.Posts
+               .Where(p => p.Title.Contains(title))
+               .ToListAsync();
+            
             return  posts;
         }
 
