@@ -1,42 +1,35 @@
-﻿using Application.Dto;
+﻿using Application.Dto.Cosmos;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers.V2
 
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
-    [ApiVersion("2.0")]
+
+    [ApiVersion("2.0")] 
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly IPostService _postService;
-        public PostsController(IPostService postService)
+        private readonly ICosmosPostService _postService;
+        public PostsController(ICosmosPostService postService)
         {
             _postService = postService;
         }
 
         [SwaggerOperation(Summary = "Retrives all posts")]
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAllPostsAsync()
         {
             var posts = await _postService.GetAllPostsAsync();
-            return Ok(
-                new
-                {
-                    posts = posts,
-                    Count = posts.Count()
-                });
+            return Ok(posts);
         }
 
         [SwaggerOperation(Summary = "Retrives a sprcific post by unique id")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(int id)
+        public async Task<IActionResult> GetPostByIdAsync(string id)
         {
             var post = await _postService.GetPostByIdAsync(id);
             if (post == null)
@@ -49,7 +42,7 @@ namespace WebAPI.Controllers.V2
 
         [SwaggerOperation(Summary = "Create a new post")]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(CreatePostDto newPost)
+        public async Task<IActionResult> CreateAsync(CreateCosmosPostDto newPost)
         { 
             var post = await _postService.AddNewPostAsync(newPost);
             return Created($"api/posts/{post.Id}", post);
@@ -57,7 +50,7 @@ namespace WebAPI.Controllers.V2
 
         [SwaggerOperation(Summary = "Update a existing post")]
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync(UpdatePostDto updatePost)
+        public async Task<IActionResult> UpdateAsync(UpdateCosmosPostDto updatePost)
         {
             await _postService.UpdatePostAsync(updatePost);
             return NoContent();
@@ -65,10 +58,18 @@ namespace WebAPI.Controllers.V2
 
         [SwaggerOperation(Summary = "Delete a specific post")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
             await _postService.DeletePostAsync(id);
             return NoContent();
+        }
+
+        [SwaggerOperation(Summary = "Search post by title")]
+        [HttpGet("Search/{title}")]
+        public async Task<IActionResult> GetAsync(string title)
+        {
+            var posts = await _postService.SearchPostByTitleAsync(title);
+            return Ok(posts);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace WebAPI.Installers
             services.AddControllers();
             services.AddApiVersioning(x =>
             {
-                x.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                x.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(2, 0);
                 x.AssumeDefaultVersionWhenUnspecified = true;
                 x.ReportApiVersions = true;
             });
