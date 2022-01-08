@@ -26,19 +26,29 @@ namespace WebAPI.Controllers.V1
             _postService = postService;
         }
 
-        [SwaggerOperation(Summary = "Retrives all posts")]
+        [SwaggerOperation(Summary = "Retrieves sort fields")]
+        [HttpGet("[action]")]
+        public IActionResult GetSortFields()
+        {
+            return Ok(SortingHelper.getSortFields().Select(x => x.Key));
+        }
+
+        [SwaggerOperation(Summary = "Retrieves all posts")]
         [HttpGet]
-        public async Task<IActionResult> GetAsync([FromQuery]PaginationFilter paginationFilter)
+        public async Task<IActionResult> GetAsync([FromQuery]PaginationFilter paginationFilter, [FromQuery] SortingFilter sortingFilter)
         {
             var validPaginationFilter = new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize);
+            var validSortFilter = new SortingFilter(sortingFilter.SortField, sortingFilter.Ascending);
 
-            var posts = await _postService.GetAllPostsAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize);
+            var posts = await _postService.GetAllPostsAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize,
+                validSortFilter.SortField, validSortFilter.Ascending);
+
             var totalRecords = await _postService.GetAllCountAsync();
 
             return Ok(PaginationHelper.CreatePageResponse(posts, validPaginationFilter, totalRecords));
         }
 
-        [SwaggerOperation(Summary = "Retrives a sprcific post by unique id")]
+        [SwaggerOperation(Summary = "Retrieves a specific post by unique id")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {

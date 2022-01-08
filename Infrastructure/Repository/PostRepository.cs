@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Infrastructure.ExtensionMethods;
 
 namespace Infrastructure.Repository
 {
@@ -33,9 +34,9 @@ namespace Infrastructure.Repository
             await Task.CompletedTask;
         }
 
-        public async Task<IEnumerable<Post>> GetAllAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<Post>> GetAllAsync(int pageNumber, int pageSize, string sortField, bool ascending)
         {
-           return await _context.Posts.Skip((pageNumber -1) * pageSize).Take(pageSize).ToListAsync();
+           return await _context.Posts.OrderByPropertyName(sortField, ascending).Skip((pageNumber -1) * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<int> GetAllCountAsync()
