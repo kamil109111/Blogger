@@ -39,15 +39,15 @@ namespace Application.Services
             await _postRepository.DeleteAsync(post);
         }
 
-        public async Task<IEnumerable<PostDto>> GetAllPostsAsync(int pageNumber, int pageSize, string sortField, bool ascending)
+        public async Task<IEnumerable<PostDto>> GetAllPostsAsync(int pageNumber, int pageSize, string sortField, bool ascending, string filterBy)
         {
-            var posts = await _postRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending);
+            var posts = await _postRepository.GetAllAsync(pageNumber, pageSize, sortField, ascending, filterBy);
             return _mapper.Map<IEnumerable<PostDto>>(posts);
         }
 
-        public async Task<int> GetAllCountAsync()
+        public async Task<int> GetAllCountAsync(string filterBy)
         {
-            return await _postRepository.GetAllCountAsync();
+            return await _postRepository.GetAllCountAsync(filterBy);
         }
 
         public async Task<PostDto> GetPostByIdAsync(int id)
