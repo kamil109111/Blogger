@@ -1,14 +1,20 @@
-﻿using Application.Dto;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Application.Dto;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
+using WebAPI.Filters;
+using WebAPI.Helper;
+using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
 
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
+    
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [ApiController]
@@ -22,10 +28,14 @@ namespace WebAPI.Controllers.V1
 
         [SwaggerOperation(Summary = "Retrives all posts")]
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery]PaginationFilter paginationFilter)
         {
-            var posts = await _postService.GetAllPostsAsync();
-            return Ok(posts);
+            var validPaginationFilter = new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize);
+
+            var posts = await _postService.GetAllPostsAsync(validPaginationFilter.PageNumber, validPaginationFilter.PageSize);
+            var totalRecords = await _postService.GetAllCountAsync();
+
+            return Ok(PaginationHelper.CreatePageResponse(posts, validPaginationFilter, totalRecords));
         }
 
         [SwaggerOperation(Summary = "Retrives a sprcific post by unique id")]
@@ -38,7 +48,7 @@ namespace WebAPI.Controllers.V1
                 return NotFound();
             }
 
-            return Ok(post);
+            return Ok(new Response<PostDto>(post));
         }
 
         [SwaggerOperation(Summary = "Create a new post")]
@@ -46,7 +56,7 @@ namespace WebAPI.Controllers.V1
         public async Task<IActionResult> CreateAsync(CreatePostDto newPost)
         {
             var post = await _postService.AddNewPostAsync(newPost);
-            return Created($"api/posts/{post.Id}", post);
+            return Created($"api/posts/{post.Id}", new Response<PostDto>(post));
         }
 
         [SwaggerOperation(Summary = "Update a existing post")]
